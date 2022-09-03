@@ -20,15 +20,7 @@ class RandomChar extends Component {
 
   componentDidMount() {
     this.getRandomChar();
-
-    // this.timerId = setInterval(() => {
-    //   this.getRandomChar();
-    // }, 4000);
   }
-
-  //   componentWillUnmount() {
-  //     clearInterval(this.timerId);
-  //   }
 
   marvelService = new MarvelService();
 

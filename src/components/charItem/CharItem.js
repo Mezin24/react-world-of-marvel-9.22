@@ -9,8 +9,8 @@ class CharItem extends Component {
       : { objectFit: 'cover' };
 
     return (
-      <li className='char__item'>
-        <img src={thumbnail} alt='abyss' style={imgStyle} />
+      <li className='char__item' onClick={this.props.onSelectChar}>
+        <img src={thumbnail} alt={name} style={imgStyle} />
         <div className='char__name'>{name}</div>
       </li>
     );
