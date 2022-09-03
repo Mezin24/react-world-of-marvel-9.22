@@ -1,4 +1,5 @@
 import { Component } from 'react';
+import PropTypes from 'prop-types'; // ES
 
 import './charInfo.scss';
 import Skeleton from '../../components/skeleton/Skeleton';
@@ -112,4 +113,7 @@ const View = (props) => {
   );
 };
 
+CharInfo.propTypes = {
+  selectedChar: PropTypes.number,
+};
 export default CharInfo;

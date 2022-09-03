@@ -1,6 +1,11 @@
 import { Component } from 'react';
 
 class CharItem extends Component {
+  keySelectHandler = (event) => {
+    if (event.key === 'Enter') {
+      this.props.onSelectChar(this.props.id);
+    }
+  };
   render() {
     const { name, thumbnail } = this.props;
 
@@ -8,8 +13,17 @@ class CharItem extends Component {
       ? { objectFit: 'fill' }
       : { objectFit: 'cover' };
 
+    const clazz = `char__item ${
+      this.props.isActive ? 'char__item_selected' : ''
+    }`;
+
     return (
-      <li className='char__item' onClick={this.props.onSelectChar}>
+      <li
+        tabIndex='0'
+        className={clazz}
+        onClick={() => this.props.onSelectChar(this.props.id)}
+        onKeyDown={this.keySelectHandler}
+      >
         <img src={thumbnail} alt={name} style={imgStyle} />
         <div className='char__name'>{name}</div>
       </li>
