@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types'; // ES
 
 import './charInfo.scss';
@@ -7,70 +7,58 @@ import ErrorMessage from '../../components/errorMessage/ErrorMessage';
 import Spinner from '../../components/spinner/Spinner';
 import MarvelService from '../../services/MarvelService';
 
-class CharInfo extends Component {
-  state = {
-    char: null,
-    loading: false,
-    error: false,
+const CharInfo = (props) => {
+  const [char, setChar] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
+
+  const marvelService = useMemo(() => new MarvelService(), []);
+
+  const onCharLoading = () => {
+    setLoading(true);
   };
 
-  marvelService = new MarvelService();
+  const onCharLoaded = () => {
+    setLoading(false);
+  };
 
-  componentDidMount() {
-    if (!this.setState.char) {
+  const onError = () => {
+    setError(true);
+  };
+
+  const getCharacter = useCallback(() => {
+    onCharLoading();
+    setError(false);
+    marvelService
+      .getCharacter(props.selectedChar)
+      .then((char) => setChar(char))
+      .catch((err) => onError())
+      .finally(() => onCharLoaded());
+  }, [props.selectedChar, marvelService]);
+
+  useEffect(() => {
+    if (!props.selectedChar) {
       return;
     }
-    this.getCharacter();
+    getCharacter();
+  }, [getCharacter, props.selectedChar]);
+
+  let content = <Skeleton />;
+
+  if (char) {
+    content = <View char={char} />;
   }
 
-  componentDidUpdate(prevProps, prevState) {
-    if (prevProps.selectedChar !== this.props.selectedChar) {
-      this.getCharacter();
-    }
+  if (loading) {
+    content = <Spinner />;
   }
 
-  onCharLoading = () => {
-    this.setState({ loading: true });
-  };
-
-  onCharLoaded = () => {
-    this.setState({ loading: false });
-  };
-
-  onError = () => {
-    this.setState({ error: true });
-  };
-
-  getCharacter = () => {
-    this.onCharLoading();
-    this.setState({ error: false });
-    this.marvelService
-      .getCharacter(this.props.selectedChar)
-      .then((char) => this.setState({ char }))
-      .catch((err) => this.onError())
-      .finally(() => this.onCharLoaded());
-  };
-
-  render() {
-    const { char, loading, error } = this.state;
-
-    let content = <Skeleton />;
-
-    if (char) {
-      content = <View char={char} />;
-    }
-
-    if (loading) {
-      content = <Spinner />;
-    }
-
-    if (error) {
-      content = <ErrorMessage />;
-    }
-
-    return <div className='char__info'>{content}</div>;
+  if (error) {
+    content = <ErrorMessage />;
   }
-}
+
+  return <div className='char__info'>{content}</div>;
+};
 
 const View = (props) => {
   const { name, description, thumbnail, homepage, wiki, comics } = props.char;
