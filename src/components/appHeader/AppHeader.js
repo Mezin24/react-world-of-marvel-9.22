@@ -1,21 +1,26 @@
+import { NavLink } from 'react-router-dom';
 import './appHeader.scss';
 
 const AppHeader = () => {
   return (
     <header className='app__header'>
       <h1 className='app__title'>
-        <a href='https://mail.com'>
+        <NavLink to='/'>
           <span>Marvel</span> information portal
-        </a>
+        </NavLink>
       </h1>
       <nav className='app__menu'>
         <ul>
           <li>
-            <a href='https://mail.com'>Characters</a>
+            <NavLink to='/' exact>
+              Characters
+            </NavLink>
           </li>
           /
           <li>
-            <a href='https://mail.com'>Comics</a>
+            <NavLink to='/comics' exact>
+              Comics
+            </NavLink>
           </li>
         </ul>
       </nav>

@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types'; // ES
 import useMarvelService from '../../services/MarvelService';
 
