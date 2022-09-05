@@ -1,22 +1,20 @@
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import PropTypes from 'prop-types'; // ES
+import useMarvelService from '../../services/MarvelService';
 
 import './charList.scss';
-import MarvelService from '../../services/MarvelService';
 import Spinner from '../spinner/Spinner';
 import ErrorMessage from '../errorMessage/ErrorMessage';
 import CharItem from '../charItem/CharItem';
 
 const CharList = (props) => {
   const [chars, setChars] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
   const [offset, setOffset] = useState(210);
   const [newItemsLoading, setNewItemsLoading] = useState(false);
   const [ended, setEnded] = useState(false);
   const [selecetedChar, setselecetedChar] = useState(null);
 
-  const marvelService = useMemo(() => new MarvelService(), []);
+  const { loading, error, getAllCharacters } = useMarvelService();
 
   const onCharLoaded = (data) => {
     let ended = false;
@@ -24,7 +22,6 @@ const CharList = (props) => {
       ended = true;
     }
 
-    setLoading((prevState) => false);
     setChars((prevState) => [...prevState, ...data]);
     setOffset((prevState) => prevState + 9);
     setNewItemsLoading((prevState) => false);
@@ -32,21 +29,19 @@ const CharList = (props) => {
   };
 
   const getCharacters = useCallback(
-    async (offset) => {
-      setNewItemsLoading(true);
-      try {
-        const res = await marvelService.getAllCharacters(offset);
-        onCharLoaded(res);
-      } catch (err) {
-        setLoading(false);
-        setError(true);
+    async (offset = 210, init = true) => {
+      if (!init) {
+        setNewItemsLoading(true);
       }
+      getAllCharacters(offset).then((data) => {
+        onCharLoaded(data);
+      });
     },
-    [marvelService]
+    [getAllCharacters]
   );
 
   const loadNewItemsHandler = () => {
-    getCharacters(offset);
+    getCharacters(offset, false);
   };
 
   const onSelectItemHandler = (itemId) => {
@@ -73,7 +68,7 @@ const CharList = (props) => {
     </ul>
   );
 
-  if (loading) {
+  if (loading && !newItemsLoading) {
     content = <Spinner />;
   }
 

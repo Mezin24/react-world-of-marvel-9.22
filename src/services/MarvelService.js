@@ -1,3 +1,4 @@
+import { useCallback } from 'react';
 import useHttp from '../hooks/http-hook';
 
 const useMarvelService = () => {
@@ -7,17 +8,23 @@ const useMarvelService = () => {
   const _apiKey = 'apikey=70b306b1048a409e977894c03637b4a3';
   const _baseOffset = 210;
 
-  const getAllCharacters = (offset = _baseOffset) => {
-    return getResourse(`${_url}?limit=9&offset=${offset}&${_apiKey}`).then(
-      (res) => res.data.results.map((char) => _transformData(char))
-    );
-  };
+  const getAllCharacters = useCallback(
+    (offset = _baseOffset) => {
+      return getResourse(`${_url}?limit=9&offset=${offset}&${_apiKey}`).then(
+        (res) => res.data.results.map((char) => _transformData(char))
+      );
+    },
+    [getResourse]
+  );
 
-  const getCharacter = (id) => {
-    return getResourse(`${_url}/${id}?${_apiKey}`).then((res) => {
-      return _transformData(res.data.results[0]);
-    });
-  };
+  const getCharacter = useCallback(
+    (id) => {
+      return getResourse(`${_url}/${id}?${_apiKey}`).then((res) => {
+        return _transformData(res.data.results[0]);
+      });
+    },
+    [getResourse]
+  );
 
   const _transformData = (charData) => {
     return {

@@ -1,47 +1,23 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types'; // ES
+import useMarvelService from '../../services/MarvelService';
 
 import './charInfo.scss';
 import Skeleton from '../../components/skeleton/Skeleton';
 import ErrorMessage from '../../components/errorMessage/ErrorMessage';
 import Spinner from '../../components/spinner/Spinner';
-import MarvelService from '../../services/MarvelService';
 
 const CharInfo = (props) => {
   const [char, setChar] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(false);
-
-  const marvelService = useMemo(() => new MarvelService(), []);
-
-  const onCharLoading = () => {
-    setLoading(true);
-  };
-
-  const onCharLoaded = () => {
-    setLoading(false);
-  };
-
-  const onError = () => {
-    setError(true);
-  };
-
-  const getCharacter = useCallback(() => {
-    onCharLoading();
-    setError(false);
-    marvelService
-      .getCharacter(props.selectedChar)
-      .then((char) => setChar(char))
-      .catch((err) => onError())
-      .finally(() => onCharLoaded());
-  }, [props.selectedChar, marvelService]);
+  const { loading, error, getCharacter, clearError } = useMarvelService();
 
   useEffect(() => {
     if (!props.selectedChar) {
       return;
     }
-    getCharacter();
-  }, [getCharacter, props.selectedChar]);
+    clearError();
+    getCharacter(props.selectedChar).then((char) => setChar(char));
+  }, [getCharacter, props.selectedChar, clearError]);
 
   let content = <Skeleton />;
 
