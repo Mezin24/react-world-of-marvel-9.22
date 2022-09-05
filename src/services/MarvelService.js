@@ -40,6 +40,12 @@ const useMarvelService = () => {
     [getResourse]
   );
 
+  const getComics = useCallback(async (comicsId) => {
+    return fetch(
+      `https://gateway.marvel.com:443/v1/public/comics/${comicsId}?${_apiKey}`
+    ).then(_transformComicsData);
+  }, []);
+
   const _transformData = (charData) => {
     return {
       id: charData.id,
@@ -62,6 +68,11 @@ const useMarvelService = () => {
       thumbnail:
         comicsData.thumbnail.path + '.' + comicsData.thumbnail.extension,
       homepage: comicsData.urls[0].url,
+      description: comicsData.description || 'There is no description',
+      pageCount: comicsData.pageCount
+        ? `${comicsData.pageCount} p.`
+        : 'No information about the number of pages',
+      language: comicsData.textObjects.language || 'en-us',
     };
   };
 
@@ -72,6 +83,7 @@ const useMarvelService = () => {
     getCharacter,
     clearError,
     getAllComics,
+    getComics,
   };
 };
 

@@ -1,7 +1,7 @@
 const ComicsItem = (props) => {
   return (
     <li className='comics__item'>
-      <a href={props.homepage}>
+      <a href='#'>
         <img
           src={props.thumbnail}
           alt={props.title}
