@@ -12,40 +12,39 @@ const useMarvelService = () => {
   const _baseComicsOffset = 0;
 
   const getAllCharacters = useCallback(
-    (offset = _baseOffset) => {
-      return getResourse(
+    async (offset = _baseOffset) => {
+      const res = await getResourse(
         `${_urlChars}?limit=9&offset=${offset}&${_apiKey}`
-      ).then((res) => res.data.results.map((char) => _transformData(char)));
+      );
+      return res.data.results.map((char) => _transformData(char));
     },
     [getResourse]
   );
 
   const getCharacter = useCallback(
-    (id) => {
-      return getResourse(`${_urlChars}/${id}?${_apiKey}`).then((res) => {
-        return _transformData(res.data.results[0]);
-      });
+    async (id) => {
+      const res = await getResourse(`${_urlChars}/${id}?${_apiKey}`);
+      return _transformData(res.data.results[0]);
     },
     [getResourse]
   );
 
   const getAllComics = useCallback(
     async (offset = _baseComicsOffset) => {
-      return getResourse(
+      const res = await getResourse(
         `${_urlComics}?orderBy=-issueNumber&limit=8&offset=${offset}&${_apiKey}`
-      ).then((res) => {
-        return res.data.results.map((comics) => _transformComicsData(comics));
-      });
+      );
+      return res.data.results.map((comics) => _transformComicsData(comics));
     },
     [getResourse]
   );
 
   const getComics = useCallback(
     async (comicsId) => {
-      return getResourse(`${_urlComics}/${comicsId}?${_apiKey}`).then((res) =>
-        _transformComicsData(res.data.results[0])
-      );
+      const res = await getResourse(`${_urlComics}/${comicsId}?${_apiKey}`);
+      return _transformComicsData(res.data.results[0]);
     },
+
     [getResourse]
   );
 
