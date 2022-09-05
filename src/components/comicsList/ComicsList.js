@@ -10,11 +10,15 @@ const ComicsList = () => {
   const [comics, setComics] = useState([]);
   const [offset, setOffset] = useState(0);
   const [newComicsLoading, setNewComicsLoading] = useState(false);
+  const [comicsEnded, setComicsEnded] = useState(false);
 
   const onRenderComics = useCallback(
     async (offset) => {
       return getAllComics(offset).then((data) => {
         setComics((prevState) => [...prevState, ...data]);
+        if (data.length < 8) {
+          setComicsEnded(true);
+        }
         setNewComicsLoading(false);
       });
     },
@@ -52,15 +56,17 @@ const ComicsList = () => {
     <div className='comics__list'>
       <ul className='comics__grid'></ul>
       {content}
-      <button
-        disabled={newComicsLoading}
-        onClick={addNewComicsHandler}
-        className='button button__main button__long'
-      >
-        <div className='inner'>
-          {newComicsLoading ? 'Loading...' : 'load more'}
-        </div>
-      </button>
+      {!comicsEnded && (
+        <button
+          disabled={newComicsLoading}
+          onClick={addNewComicsHandler}
+          className='button button__main button__long'
+        >
+          <div className='inner'>
+            {newComicsLoading ? 'Loading...' : 'load more'}
+          </div>
+        </button>
+      )}
     </div>
   );
 };
