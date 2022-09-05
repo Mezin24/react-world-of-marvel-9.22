@@ -23,7 +23,8 @@ const useHttp = () => {
           throw new Error(`Could't fetch data from ${url}`);
         }
 
-        const data = res.json();
+        setLoading(false);
+        const data = await res.json();
         return data;
       } catch (err) {
         setLoading(false);

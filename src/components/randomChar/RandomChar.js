@@ -1,7 +1,7 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
+import useMarvelService from '../../services/MarvelService';
 import './randomChar.scss';
 import mjolnir from '../../resources/img/mjolnir.png';
-import MarvelService from '../../services/MarvelService';
 import Spinner from '../spinner/Spinner';
 import ErrorMessage from '../errorMessage/ErrorMessage';
 
@@ -14,42 +14,27 @@ const RandomChar = () => {
     wiki: null,
   });
 
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
-
-  const marvelService = useMemo(() => new MarvelService(), []);
+  const { loading, error, getCharacter, clearError } = useMarvelService();
 
   const onCharLoaded = (char) => {
     setChar(char);
-    setLoading(false);
   };
 
-  const onError = () => {
-    setLoading(false);
-    setError(true);
+  const getRandomChar = async () => {
+    clearError();
+    const randomId = Math.floor(Math.random() * (1011400 - 1011000) + 1011000);
+    // const char = await getCharacter(randomId);
+    // await onCharLoaded(char);
+    getCharacter(randomId).then((data) => onCharLoaded(data));
   };
-
-  const getRandomChar = useCallback(async () => {
-    try {
-      setError(false);
-      const randomId = Math.floor(
-        Math.random() * (1011400 - 1011000) + 1011000
-      );
-      const char = await marvelService.getCharacter(randomId);
-      onCharLoaded(char);
-    } catch (err) {
-      onError();
-    }
-  }, [marvelService]);
 
   const updateCharHandler = () => {
-    setLoading(true);
     getRandomChar();
   };
 
   useEffect(() => {
     getRandomChar();
-  }, [getRandomChar]);
+  }, []);
 
   let content = <View char={char} />;
 
@@ -83,7 +68,7 @@ const RandomChar = () => {
 const View = ({ char }) => {
   const { name, description, thumbnail, homepage, wiki } = char;
 
-  const imgStyle = thumbnail.includes('image_not_available')
+  const imgStyle = thumbnail?.includes('image_not_available')
     ? { objectFit: 'contain' }
     : { objectFit: 'cover' };
 
