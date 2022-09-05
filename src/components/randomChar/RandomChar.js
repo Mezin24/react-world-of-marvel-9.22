@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import useMarvelService from '../../services/MarvelService';
 import './randomChar.scss';
 import mjolnir from '../../resources/img/mjolnir.png';
@@ -16,17 +16,15 @@ const RandomChar = () => {
 
   const { loading, error, getCharacter, clearError } = useMarvelService();
 
-  const onCharLoaded = (char) => {
+  const onCharLoaded = useCallback((char) => {
     setChar(char);
-  };
+  }, []);
 
-  const getRandomChar = async () => {
+  const getRandomChar = useCallback(async () => {
     clearError();
     const randomId = Math.floor(Math.random() * (1011400 - 1011000) + 1011000);
-    // const char = await getCharacter(randomId);
-    // await onCharLoaded(char);
     getCharacter(randomId).then((data) => onCharLoaded(data));
-  };
+  }, [getCharacter, onCharLoaded, clearError]);
 
   const updateCharHandler = () => {
     getRandomChar();
@@ -34,7 +32,7 @@ const RandomChar = () => {
 
   useEffect(() => {
     getRandomChar();
-  }, []);
+  }, [getRandomChar]);
 
   let content = <View char={char} />;
 

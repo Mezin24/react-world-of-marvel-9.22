@@ -1,7 +1,9 @@
+import { Link } from 'react-router-dom';
+
 const ComicsItem = (props) => {
   return (
     <li className='comics__item'>
-      <a href='#'>
+      <Link to={`/comics/${props.id}`}>
         <img
           src={props.thumbnail}
           alt={props.title}
@@ -9,7 +11,7 @@ const ComicsItem = (props) => {
         />
         <div className='comics__item-name'>{props.title}</div>
         <div className='comics__item-price'>{props.price}$</div>
-      </a>
+      </Link>
     </li>
   );
 };

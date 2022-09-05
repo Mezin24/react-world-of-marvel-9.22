@@ -40,11 +40,14 @@ const useMarvelService = () => {
     [getResourse]
   );
 
-  const getComics = useCallback(async (comicsId) => {
-    return fetch(
-      `https://gateway.marvel.com:443/v1/public/comics/${comicsId}?${_apiKey}`
-    ).then(_transformComicsData);
-  }, []);
+  const getComics = useCallback(
+    async (comicsId) => {
+      return getResourse(`${_urlComics}/${comicsId}?${_apiKey}`).then((res) =>
+        _transformComicsData(res.data.results[0])
+      );
+    },
+    [getResourse]
+  );
 
   const _transformData = (charData) => {
     return {
@@ -64,7 +67,9 @@ const useMarvelService = () => {
     return {
       id: comicsData.id,
       title: comicsData.title,
-      price: comicsData.prices[0].price,
+      price: comicsData.prices[0].price
+        ? `${comicsData.prices[0].price}$`
+        : 'not available',
       thumbnail:
         comicsData.thumbnail.path + '.' + comicsData.thumbnail.extension,
       homepage: comicsData.urls[0].url,
